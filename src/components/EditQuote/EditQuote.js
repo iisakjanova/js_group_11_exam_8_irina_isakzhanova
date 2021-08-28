@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 import axiosApi from "../../axiosApi";
 
@@ -9,6 +9,18 @@ import "./EditQuote.css";
 
 const EditQuote = ({match}) => {
     const history = useHistory();
+
+    const isNew = !Boolean(match.params.id);
+
+    useEffect(() => {
+        if (isNew) {
+            setQuote({
+                category: categories[0].id,
+                author: '',
+                text: ''
+            });
+        }
+    }, [isNew]);
 
     const [quote, setQuote] = useState({
         category: history.location.state?.category || categories[0].id,
@@ -93,7 +105,7 @@ const EditQuote = ({match}) => {
 
     let title = '';
 
-    if (match.params.id) {
+    if (!isNew) {
         title = 'Edit a quote';
     } else {
         title = 'Submit a new quote';
