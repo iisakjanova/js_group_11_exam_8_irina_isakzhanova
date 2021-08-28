@@ -45,6 +45,18 @@ const QuotesList = () => {
         return response.data;
     };
 
+    const removeQuote = async id => {
+        setLoading(true);
+
+        try {
+            await axiosApi.delete('quotes/' + id + '.json');
+            const {[id]: _, ...restQuotes} = quotes;
+            setQuotes(restQuotes);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="QuotesList">
             {loading
@@ -57,8 +69,10 @@ const QuotesList = () => {
                         <h4>{categoryData.title}</h4>
                         {Object.keys(quotes).map(key => (
                             <Quote
+                                key={key}
                                 text={quotes[key].text}
                                 author={quotes[key].author}
+                                onRemove={() => removeQuote(key)}
                             />
                         ))}
                     </div>

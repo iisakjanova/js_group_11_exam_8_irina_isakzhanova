@@ -15,6 +15,7 @@ const Categories = () => {
             </NavLink>
             {categories.map(category => (
                 <NavLink
+                    key={category.id}
                     to={'/quotes/' + category.id}
                 >
                     {category.title}
