@@ -1,0 +1,9 @@
+.Quote {
+    border: 1px solid grey;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.Quote button {
+    margin-right: 10px;
+}

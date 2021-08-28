@@ -13,7 +13,8 @@ const Quotes = () => {
             <Header />
             <Switch>
                 <Route path="/" exact component={Home} />
-                <Route path="/quotes" component={Home} />
+                <Route path="/quotes" exact component={Home} />
+                <Route path="/quotes/:category" component={Home} />
                 <Route path="/add-quote" component={EditQuote} />
                 <Route render={() => <h1>Not found</h1>} />
             </Switch>

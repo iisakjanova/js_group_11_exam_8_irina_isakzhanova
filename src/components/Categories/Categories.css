@@ -1,3 +1,7 @@
 .Categories a {
     display: block;
 }
+
+.Categories {
+    padding: 0;
+}
