@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
 import {useHistory} from "react-router-dom";
+import axiosApi from "../../axiosApi";
 
 import Spinner from "../UI/Spinner/Spinner";
 import {categories} from "../../constants";
 
 import "./EditQuote.css";
 
-const EditQuote = () => {
+const EditQuote = ({match}) => {
     const history = useHistory();
 
     const [quote, setQuote] = useState({
-        category: history.location.state?.category || 'star-wars',
+        category: history.location.state?.category || categories[0].id,
         author: history.location.state?.author || '',
         text: history.location.state?.text || ''
     });
@@ -26,8 +27,57 @@ const EditQuote = () => {
         }));
     };
 
-    const handleFormSubmit = () => {
+    const sendCreateQuoteRequest = async () => {
+        await axiosApi.post('/quotes.json', {
+            category: quote.category,
+            author: quote.author,
+            text: quote.text
+        });
+    };
 
+    const createQuote = async () => {
+        try {
+            if (quote.category && quote.author && quote.text) {
+                await sendCreateQuoteRequest();
+
+                setQuote({
+                    category: categories[0].id,
+                    author: '',
+                    text: ''
+                });
+
+                setFieldError('');
+                history.replace('/');
+            } else {
+                setFieldError('* Fill all the fields, please!');
+                setLoading(false);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    const updateQuote = () => {
+
+    }
+
+    const handleFormSubmit = e => {
+        e.preventDefault();
+        setLoading(true);
+
+        if (history.location.state?.id) {
+            updateQuote();
+        } else {
+            createQuote();
+        }
+    };
+
+    let title = '';
+
+    if (match.params.id) {
+        title = 'Edit a quote';
+    } else {
+        title = 'Submit a new quote';
     }
 
     return (
@@ -36,44 +86,47 @@ const EditQuote = () => {
                 ?
                 <Spinner />
                 :
-                <form onSubmit={handleFormSubmit}>
-                    <label>
-                        <p>Category</p>
-                        <select
-                            name="category"
-                            onChange={handleFieldChange}
-                        >
-                            {categories.map(category => (
-                                <option
-                                    value={category.id}
-                                    key={category.id}
-                                >
-                                    {category.title}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-                    <label>
-                        <p>Title</p>
-                        <input
-                            type="text"
-                            name="author"
-                            value={quote.author}
-                            onChange={handleFieldChange}
-                        />
-                    </label>
-                    <label>
-                        <p>Description</p>
-                        <textarea
-                            name="text"
-                            value={quote.text}
-                            onChange={handleFieldChange}
-                        />
-                    </label>
-                    <button type="submit">Save</button>
-                </form>
+                <div className="Container">
+                    <h3>{title}</h3>
+                    <form onSubmit={handleFormSubmit}>
+                        <label>
+                            <p>Category</p>
+                            <select
+                                name="category"
+                                onChange={handleFieldChange}
+                            >
+                                {categories.map(category => (
+                                    <option
+                                        value={category.id}
+                                        key={category.id}
+                                    >
+                                        {category.title}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        <label>
+                            <p>Title</p>
+                            <input
+                                type="text"
+                                name="author"
+                                value={quote.author}
+                                onChange={handleFieldChange}
+                            />
+                        </label>
+                        <label>
+                            <p>Description</p>
+                            <textarea
+                                name="text"
+                                value={quote.text}
+                                onChange={handleFieldChange}
+                            />
+                        </label>
+                        <button type="submit">Save</button>
+                    </form>
+                </div>
             }
-            <p className="FieldError">{fieldError}</p>
+                <p className="FieldError">{fieldError}</p>
         </div>
     );
 };
