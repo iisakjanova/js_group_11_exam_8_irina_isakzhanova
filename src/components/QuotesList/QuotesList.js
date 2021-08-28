@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useRouteMatch} from 'react-router-dom'
+import {useRouteMatch, useHistory} from 'react-router-dom'
 import axiosApi from "../../axiosApi";
 
 import Spinner from "../UI/Spinner/Spinner";
@@ -16,8 +16,9 @@ const QuotesList = () => {
         categoryData = categories.find(item => item.id === selectedCategory);
     }
 
-    const [quotes, setQuotes] = useState('');
+    const history = useHistory();
 
+    const [quotes, setQuotes] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -57,27 +58,39 @@ const QuotesList = () => {
         }
     };
 
+    const handleEditQuote = (id, quote) => {
+        history.replace('/quotes/' + id + '/edit', {
+            id,
+            text: quote.text,
+            author: quote.author,
+            category: quote.category
+        });
+    };
+
+    const quotesArray = Object.keys(quotes);
+
     return (
         <div className="QuotesList">
             {loading
                 ?
                 <Spinner />
                 :
-                quotes
+                quotesArray.length > 0
                     ?
                     <div>
                         <h4>{categoryData.title}</h4>
-                        {Object.keys(quotes).map(key => (
+                        {quotesArray.map(key => (
                             <Quote
                                 key={key}
                                 text={quotes[key].text}
                                 author={quotes[key].author}
                                 onRemove={() => removeQuote(key)}
+                                onEdit={() => handleEditQuote(key, quotes[key])}
                             />
                         ))}
                     </div>
                     :
-                    null
+                    <p>No quotes yet</p>
             }
         </div>
     );

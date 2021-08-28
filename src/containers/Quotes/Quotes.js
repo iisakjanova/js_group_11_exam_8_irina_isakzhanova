@@ -14,8 +14,9 @@ const Quotes = () => {
             <Switch>
                 <Route path="/" exact component={Home} />
                 <Route path="/quotes" exact component={Home} />
-                <Route path="/quotes/:category" component={Home} />
+                <Route path="/quotes/:category" exact component={Home} />
                 <Route path="/add-quote" component={EditQuote} />
+                <Route path="/quotes/:id/edit" component={EditQuote} />
                 <Route render={() => <h1>Not found</h1>} />
             </Switch>
         </div>

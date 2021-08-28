@@ -1,13 +1,17 @@
 import React from 'react';
 import './Quote.css';
 
-const Quote = ({text, author, onRemove}) => {
+const Quote = ({text, author, onRemove, onEdit}) => {
     return (
         <div className="Quote">
             <p>{`" ${text} "`}</p>
             <p>{' - ' + author}</p>
             <div>
-                <button>Edit</button>
+                <button
+                    onClick={onEdit}
+                >
+                    Edit
+                </button>
                 <button
                     onClick={onRemove}
                 >

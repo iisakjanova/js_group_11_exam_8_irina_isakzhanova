@@ -35,6 +35,14 @@ const EditQuote = ({match}) => {
         });
     };
 
+    const sendUpdateQuoteRequest = async () => {
+        await axiosApi.put('quotes/' + history.location.state?.id + '.json', {
+            category: quote.category,
+            author: quote.author,
+            text: quote.text
+        });
+    };
+
     const createQuote = async () => {
         try {
             if (quote.category && quote.author && quote.text) {
@@ -57,18 +65,29 @@ const EditQuote = ({match}) => {
         }
     };
 
-    const updateQuote = () => {
+    const updateQuote = async () => {
+        try {
+            if (quote.category && quote.author && quote.text) {
+                await sendUpdateQuoteRequest();
+                setFieldError('');
+            } else {
+                setFieldError('* Fill all the fields, please!');
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    }
-
-    const handleFormSubmit = e => {
+    const handleFormSubmit = async e => {
         e.preventDefault();
         setLoading(true);
 
         if (history.location.state?.id) {
-            updateQuote();
+            await updateQuote();
         } else {
-            createQuote();
+            await createQuote();
         }
     };
 
@@ -92,6 +111,7 @@ const EditQuote = ({match}) => {
                         <label>
                             <p>Category</p>
                             <select
+                                value={quote.category}
                                 name="category"
                                 onChange={handleFieldChange}
                             >
